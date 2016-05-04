@@ -1,0 +1,41 @@
+build:
+  build:
+    image: docker-registry.paas.fasthosts.co.uk:443/openshift/fhdockerwithtools:latest
+    privileged: true
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    commands:
+      - docker build --pull --no-cache -t ${CI_REPO#*/}:$DRONE_BUILD_NUMBER .
+  spectests:
+    image: rzarouali/alpine-serverspec
+    privileged: true
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    commands:
+      - export IMAGE=${CI_REPO#*/}:$DRONE_BUILD_NUMBER
+      - rspec tests/serverspec.rb
+  moretests:
+    image: 1and1internet/fitnesse
+    privileged: true
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    commands:
+      - export IMAGE=${CI_REPO#*/}:$DRONE_BUILD_NUMBER
+      - rspec tests/serverspec.rb
+  publish:
+    when:
+      branch: master
+    image: docker-registry.paas.fasthosts.co.uk:443/openshift/fhdockerwithtools:latest
+    privileged: true
+    environment:
+      - DOCKERHUB_USERID=$$DOCKERHUB_USERID
+      - DOCKERHUB_EMAIL=$$DOCKERHUB_EMAIL
+      - DOCKERHUB_PASSWORD=$$DOCKERHUB_PASSWORD
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    commands:
+      - sh /somescript/script.sh
+notify:
+  webhook:
+    urls:
+      - https://templateupdater.fasthosts.co.uk/hook
