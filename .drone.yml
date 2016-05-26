@@ -3,6 +3,7 @@ build:
     when:
       event: push
     image: 1and1internet/template-library-tools
+    pull: true
     auth_config:
       username: $$DOCKERHUB_USERNAME
       password: $$DOCKERHUB_PASSWORD
