@@ -8,7 +8,6 @@ build:
       username: $$DOCKERHUB_USERNAME
       password: $$DOCKERHUB_PASSWORD
       email: $$DOCKERHUB_EMAIL
-    privileged: true
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     commands:
@@ -17,8 +16,7 @@ build:
   spectests:
     when:
       event: push
-    image: rzarouali/alpine-serverspec
-    privileged: true
+    image: 1and1internet/ubuntu-16-rspec
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     commands:
@@ -29,7 +27,6 @@ build:
     when:
       event: push
     image: 1and1internet/fitnesse
-    privileged: true
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     commands:
@@ -45,7 +42,6 @@ build:
      username: $$DOCKERHUB_USERNAME
      password: $$DOCKERHUB_PASSWORD
      email: $$DOCKERHUB_EMAIL
-    privileged: true
     volumes:
      - /var/run/docker.sock:/var/run/docker.sock
     environment:
